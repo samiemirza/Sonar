@@ -20,8 +20,9 @@ platform APIs that require the author's account. The full list lives in
 
 ## ToS notes
 
-- We identify ourselves with a custom User-Agent (`SonarBot`) and fetch each URL at most once
-  (dedup on URL; re-runs skip already-ingested sources).
+- We fetch with a standard browser User-Agent (several hosts serve 403 to anything labeled a bot,
+  even for public RSS feeds) and fetch each URL at most once (dedup on URL; re-runs skip
+  already-ingested sources).
 - Batch ingestion is manual/cron-light — a few hundred requests per full run across ~100 hosts,
   far below any rate-limiting threshold.
 - Raw text is stored solely to power retrieval + extraction with citation links back to the

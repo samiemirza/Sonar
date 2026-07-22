@@ -6,13 +6,19 @@ the feed-provided content, HTML-stripped.
 
 import re
 from datetime import UTC, datetime
+from urllib.parse import urljoin, urlparse
 
 import feedparser
 
 from sources.fetch_blogs import fetch_article, fetch_html
 
 _TAG_RE = re.compile(r"<[^>]+>")
+_FEED_LINK_RE = re.compile(
+    r"<link[^>]+type=[\"']application/(?:rss|atom)\+xml[\"'][^>]*>", re.IGNORECASE
+)
+_HREF_RE = re.compile(r"href=[\"']([^\"']+)[\"']", re.IGNORECASE)
 MIN_TEXT_CHARS = 400
+FALLBACK_FEED_PATHS = ["/feed", "/feed/", "/rss/", "/feed.xml", "/rss.xml", "/index.xml", "/atom.xml"]
 
 
 def _strip_html(html: str) -> str:
@@ -35,12 +41,47 @@ def _entry_body(entry) -> str | None:
     return None
 
 
+def _discover_feed(page_url: str, html: str):
+    """Given an HTML page where a feed was expected, find the real feed."""
+    candidates = []
+    for tag in _FEED_LINK_RE.findall(html):
+        href = _HREF_RE.search(tag)
+        if href:
+            candidates.append(urljoin(page_url, href.group(1)))
+    root = f"{urlparse(page_url).scheme}://{urlparse(page_url).netloc}"
+    candidates.extend(root + p for p in FALLBACK_FEED_PATHS)
+
+    seen = set()
+    for candidate in candidates:
+        if candidate in seen or candidate == page_url:
+            continue
+        seen.add(candidate)
+        raw = fetch_html(candidate)
+        if raw is None:
+            continue
+        parsed = feedparser.parse(raw)
+        if parsed.entries:
+            return parsed
+    return None
+
+
 def fetch_feed_entries(feed_url: str, limit: int = 5) -> list[dict]:
     """Returns up to `limit` docs: {url, title, published_at, text}."""
     raw = fetch_html(feed_url)
     if raw is None:
-        return []
-    parsed = feedparser.parse(raw)
+        # Feed URL is dead (404 etc.) — try autodiscovery from the site homepage.
+        root = f"{urlparse(feed_url).scheme}://{urlparse(feed_url).netloc}/"
+        home = fetch_html(root)
+        parsed = _discover_feed(root, home) if home else None
+        if parsed is None:
+            return []
+    else:
+        parsed = feedparser.parse(raw)
+        if not parsed.entries:
+            # URL served HTML (site rebuilt, feed moved) — autodiscover the real feed.
+            parsed = _discover_feed(feed_url, raw)
+            if parsed is None:
+                return []
 
     docs = []
     for entry in parsed.entries[:limit]:
