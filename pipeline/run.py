@@ -14,7 +14,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(prog="pipeline")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    seed = sub.add_parser("seed", help="upsert investors from seed_investors.yaml")
+    sub.add_parser("seed", help="upsert investors from seed_investors.yaml")
 
     ingest = sub.add_parser("ingest", help="fetch, chunk, and embed sources")
     ingest.add_argument("--investor", help="limit to one investor slug")
