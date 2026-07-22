@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": ["Read", "Write", "Edit", "Bash"],
+    "deny": [
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.p8)",
+      "Read(./**/*.p12)",
+      "Read(./**/play-store-key.json)",
+      "Bash(rm -rf:*)"
+    ]
+  },
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/log-session.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
