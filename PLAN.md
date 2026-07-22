@@ -69,8 +69,8 @@ This split is itself a signal: it shows you know inference-time serving and data
 | Language | **Python 3.12 + uv** | The AI-engineering lingua franca; shows you're bilingual |
 | HTTP/parsing | `httpx`, `trafilatura` (article extraction), `feedparser` (RSS) | Robust text from messy pages |
 | Transcripts | `youtube-transcript-api` | Podcast/talk transcripts without scraping |
-| LLM calls | **Anthropic SDK, structured outputs (tool use)** | Schema-enforced thesis extraction, no JSON parsing hacks |
-| Embeddings | **voyage-3** (or OpenAI text-embedding-3-small) | Quality retrieval; stored in pgvector |
+| LLM calls | **OpenAI SDK, structured outputs** | Schema-enforced thesis extraction, no JSON parsing hacks |
+| Embeddings | **OpenAI text-embedding-3-small (dimensions=1024)** | Quality retrieval; stored in pgvector |
 | Validation | `pydantic` models mirroring the Drizzle schema | Typed at both ends of the pipe |
 | Evals | Hand-rolled eval harness (golden set + LLM-judge) in `evals/` | The single strongest AI-engineer signal |
 

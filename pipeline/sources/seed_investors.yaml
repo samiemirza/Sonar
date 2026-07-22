@@ -1,11 +1,13 @@
 # Hand-curated investors + their PUBLIC source URLs.
 # Public-only, no login-walled sources — see docs/DATA_SOURCES.md.
-# Target: ~60 investors (Phase 1). Structure example below.
+# kind: rss (feed, ingests recent entries) | blog (single page) | transcript (YouTube URL)
+
+# ── Solo investors & angels ──────────────────────────────────────────
 
 - name: Elad Gil
   slug: elad-gil
   type: angel
-  stage_focus: [seed, series-a]
+  stage_focus: [seed, series-a, growth]
   site_url: https://eladgil.com
   sources:
     - url: https://blog.eladgil.com/feed
@@ -18,5 +20,523 @@
   stage_focus: [series-a, series-b]
   site_url: https://www.sarahtavel.com
   sources:
-    - url: https://www.sarahtavel.com/feed
+    - url: https://sarahtavel.substack.com/feed
       kind: rss
+
+- name: Tomasz Tunguz
+  firm: Theory Ventures
+  slug: tomasz-tunguz
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://tomtunguz.com
+  sources:
+    - url: https://tomtunguz.com/index.xml
+      kind: rss
+
+- name: Fred Wilson
+  firm: Union Square Ventures
+  slug: fred-wilson
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://avc.com
+  sources:
+    - url: https://avc.com/feed/
+      kind: rss
+
+- name: Mark Suster
+  firm: Upfront Ventures
+  slug: mark-suster
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://bothsidesofthetable.com
+  sources:
+    - url: https://bothsidesofthetable.com/feed
+      kind: rss
+
+- name: Hunter Walk
+  firm: Homebrew
+  slug: hunter-walk
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://hunterwalk.com
+  sources:
+    - url: https://hunterwalk.com/feed/
+      kind: rss
+
+- name: Brad Feld
+  firm: Foundry
+  slug: brad-feld
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://feld.com
+  sources:
+    - url: https://feld.com/feed/
+      kind: rss
+
+- name: Jason Lemkin
+  firm: SaaStr Fund
+  slug: jason-lemkin
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.saastr.com
+  sources:
+    - url: https://www.saastr.com/feed/
+      kind: rss
+
+- name: Bill Gurley
+  firm: Benchmark
+  slug: bill-gurley
+  type: fund
+  stage_focus: [series-a, series-b]
+  site_url: https://abovethecrowd.com
+  sources:
+    - url: https://abovethecrowd.com/feed/
+      kind: rss
+
+- name: Semil Shah
+  firm: Haystack
+  slug: semil-shah
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://haystack.vc
+  sources:
+    - url: https://haystack.vc/feed/
+      kind: rss
+
+- name: Charles Hudson
+  firm: Precursor Ventures
+  slug: charles-hudson
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://www.charleshudson.net
+  sources:
+    - url: https://www.charleshudson.net/feed/
+      kind: rss
+
+- name: Leo Polovets
+  firm: Humba Ventures
+  slug: leo-polovets
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://codingvc.com
+  sources:
+    - url: https://codingvc.com/rss/
+      kind: rss
+
+- name: Turner Novak
+  firm: Banana Capital
+  slug: turner-novak
+  type: fund
+  stage_focus: [pre-seed, seed, series-a]
+  site_url: https://thespl.it
+  sources:
+    - url: https://thespl.it/feed
+      kind: rss
+
+- name: Packy McCormick
+  firm: Not Boring Capital
+  slug: packy-mccormick
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.notboring.co
+  sources:
+    - url: https://www.notboring.co/feed
+      kind: rss
+
+- name: Nikhil Basu Trivedi
+  firm: Footwork
+  slug: nikhil-basu-trivedi
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.footwork.vc
+  sources:
+    - url: https://nbt.substack.com/feed
+      kind: rss
+
+- name: Paul Graham
+  firm: Y Combinator
+  slug: paul-graham
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://paulgraham.com
+  sources:
+    - url: http://www.aaronsw.com/2002/feeds/pgessays.rss
+      kind: rss
+
+- name: Harry Stebbings
+  firm: 20VC
+  slug: harry-stebbings
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.thetwentyminutevc.com
+  sources:
+    - url: https://www.thetwentyminutevc.com/feed/
+      kind: rss
+
+- name: Lenny Rachitsky
+  slug: lenny-rachitsky
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://www.lennysnewsletter.com
+  sources:
+    - url: https://www.lennysnewsletter.com/feed
+      kind: rss
+
+- name: Naval Ravikant
+  firm: AngelList
+  slug: naval-ravikant
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://nav.al
+  sources:
+    - url: https://nav.al/feed
+      kind: rss
+
+- name: Andrew Chen
+  firm: Andreessen Horowitz
+  slug: andrew-chen
+  type: fund
+  stage_focus: [series-a, series-b]
+  site_url: https://andrewchen.com
+  sources:
+    - url: https://andrewchen.substack.com/feed
+      kind: rss
+
+- name: Benedict Evans
+  slug: benedict-evans
+  type: angel
+  stage_focus: [seed]
+  site_url: https://www.ben-evans.com
+  sources:
+    - url: https://www.ben-evans.com/benedictevans?format=rss
+      kind: rss
+
+- name: Om Malik
+  firm: True Ventures
+  slug: om-malik
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://om.co
+  sources:
+    - url: https://om.co/feed/
+      kind: rss
+
+- name: M.G. Siegler
+  slug: mg-siegler
+  type: angel
+  stage_focus: [seed]
+  site_url: https://spyglass.org
+  sources:
+    - url: https://spyglass.org/rss/
+      kind: rss
+
+- name: Christoph Janz
+  firm: Point Nine
+  slug: christoph-janz
+  type: fund
+  stage_focus: [seed]
+  site_url: https://www.pointnine.com
+  sources:
+    - url: https://christophjanz.blogspot.com/feeds/posts/default
+      kind: rss
+
+- name: Jamin Ball
+  firm: Altimeter
+  slug: jamin-ball
+  type: fund
+  stage_focus: [series-b, growth]
+  site_url: https://cloudedjudgement.substack.com
+  sources:
+    - url: https://cloudedjudgement.substack.com/feed
+      kind: rss
+
+- name: Kyle Harrison
+  firm: Contrary
+  slug: kyle-harrison
+  type: fund
+  stage_focus: [seed, series-a, growth]
+  site_url: https://investing1012dot0.substack.com
+  sources:
+    - url: https://investing1012dot0.substack.com/feed
+      kind: rss
+
+- name: Ed Sim
+  firm: Boldstart Ventures
+  slug: ed-sim
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://boldstart.vc
+  sources:
+    - url: https://whatshotit.vc/feed
+      kind: rss
+
+- name: Elizabeth Yin
+  firm: Hustle Fund
+  slug: elizabeth-yin
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://elizabethyin.com
+  sources:
+    - url: https://elizabethyin.com/feed/
+      kind: rss
+
+- name: Jason Calacanis
+  firm: LAUNCH
+  slug: jason-calacanis
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://calacanis.com
+  sources:
+    - url: https://calacanis.com/feed/
+      kind: rss
+
+- name: John Luttig
+  firm: Founders Fund
+  slug: john-luttig
+  type: fund
+  stage_focus: [seed, series-a, growth]
+  site_url: https://luttig.substack.com
+  sources:
+    - url: https://luttig.substack.com/feed
+      kind: rss
+
+- name: Rex Woodbury
+  firm: Daybreak Ventures
+  slug: rex-woodbury
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.digitalnative.tech
+  sources:
+    - url: https://www.digitalnative.tech/feed
+      kind: rss
+
+- name: Astasia Myers
+  firm: Felicis
+  slug: astasia-myers
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://astasia.substack.com
+  sources:
+    - url: https://astasia.substack.com/feed
+      kind: rss
+
+- name: Tanay Jaipuria
+  firm: Wing Venture Capital
+  slug: tanay-jaipuria
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://tanayj.substack.com
+  sources:
+    - url: https://tanayj.substack.com/feed
+      kind: rss
+
+- name: Matt Turck
+  firm: FirstMark
+  slug: matt-turck
+  type: fund
+  stage_focus: [series-a, series-b]
+  site_url: https://mattturck.com
+  sources:
+    - url: https://mattturck.com/feed/
+      kind: rss
+
+- name: David Cummings
+  firm: Atlanta Ventures
+  slug: david-cummings
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://davidcummings.org
+  sources:
+    - url: https://davidcummings.org/feed/
+      kind: rss
+
+- name: Rob Go
+  firm: NextView Ventures
+  slug: rob-go
+  type: fund
+  stage_focus: [seed]
+  site_url: https://robgo.org
+  sources:
+    - url: https://robgo.org/feed/
+      kind: rss
+
+- name: Scott Belsky
+  slug: scott-belsky
+  type: angel
+  stage_focus: [seed, series-a]
+  site_url: https://www.implications.com
+  sources:
+    - url: https://www.implications.com/feed
+      kind: rss
+
+- name: Howard Lindzon
+  firm: Social Leverage
+  slug: howard-lindzon
+  type: fund
+  stage_focus: [seed]
+  site_url: https://howardlindzon.com
+  sources:
+    - url: https://howardlindzon.com/feed/
+      kind: rss
+
+- name: Erik Torenberg
+  firm: Village Global
+  slug: erik-torenberg
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://eriktorenberg.substack.com
+  sources:
+    - url: https://eriktorenberg.substack.com/feed
+      kind: rss
+
+- name: Nathan Benaich
+  firm: Air Street Capital
+  slug: nathan-benaich
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.airstreet.com
+  sources:
+    - url: https://press.airstreet.com/feed
+      kind: rss
+
+- name: Chris Paik
+  firm: Pace Capital
+  slug: chris-paik
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.pacecapital.com
+  sources:
+    - url: https://cpaik.substack.com/feed
+      kind: rss
+
+- name: Sam Altman
+  slug: sam-altman
+  type: angel
+  stage_focus: [seed, series-a]
+  site_url: https://blog.samaltman.com
+  sources:
+    - url: https://blog.samaltman.com/posts.atom
+      kind: rss
+
+- name: Garry Tan
+  firm: Y Combinator
+  slug: garry-tan
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://www.garrytan.com
+  sources:
+    - url: https://www.garrytan.com/posts.atom
+      kind: rss
+
+- name: Jerry Neumann
+  firm: Neu Venture Capital
+  slug: jerry-neumann
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://reactionwheel.net
+  sources:
+    - url: https://reactionwheel.net/feed
+      kind: rss
+
+- name: Kevin Kwok
+  slug: kevin-kwok
+  type: angel
+  stage_focus: [pre-seed, seed]
+  site_url: https://kwokchain.com
+  sources:
+    - url: https://kwokchain.com/feed/
+      kind: rss
+
+- name: Shomik Ghosh
+  firm: Boldstart Ventures
+  slug: shomik-ghosh
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://softwaresnackbites.substack.com
+  sources:
+    - url: https://softwaresnackbites.substack.com/feed
+      kind: rss
+
+- name: Boris Wertz
+  firm: Version One Ventures
+  slug: boris-wertz
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://versionone.vc
+  sources:
+    - url: https://versionone.vc/feed/
+      kind: rss
+
+# ── Firm blogs ───────────────────────────────────────────────────────
+
+- name: Andreessen Horowitz
+  firm: Andreessen Horowitz
+  slug: a16z
+  type: fund
+  stage_focus: [seed, series-a, series-b, growth]
+  site_url: https://a16z.com
+  sources:
+    - url: https://a16z.com/feed/
+      kind: rss
+
+- name: Greylock
+  firm: Greylock
+  slug: greylock
+  type: fund
+  stage_focus: [seed, series-a, series-b]
+  site_url: https://greylock.com
+  sources:
+    - url: https://greylock.com/feed/
+      kind: rss
+
+- name: First Round Capital
+  firm: First Round Capital
+  slug: first-round
+  type: fund
+  stage_focus: [pre-seed, seed, series-a]
+  site_url: https://review.firstround.com
+  sources:
+    - url: https://review.firstround.com/feed.xml
+      kind: rss
+
+- name: Lightspeed Venture Partners
+  firm: Lightspeed
+  slug: lightspeed
+  type: fund
+  stage_focus: [seed, series-a, series-b, growth]
+  site_url: https://lsvp.com
+  sources:
+    - url: https://lsvp.com/feed/
+      kind: rss
+
+- name: NFX
+  firm: NFX
+  slug: nfx
+  type: fund
+  stage_focus: [pre-seed, seed]
+  site_url: https://www.nfx.com
+  sources:
+    - url: https://www.nfx.com/feed
+      kind: rss
+
+- name: Union Square Ventures
+  firm: Union Square Ventures
+  slug: usv
+  type: fund
+  stage_focus: [seed, series-a]
+  site_url: https://www.usv.com
+  sources:
+    - url: https://www.usv.com/feed/
+      kind: rss
+
+- name: Bessemer Venture Partners
+  firm: Bessemer Venture Partners
+  slug: bessemer
+  type: fund
+  stage_focus: [series-a, series-b, growth]
+  site_url: https://www.bvp.com
+  sources:
+    - url: https://www.bvp.com/atlas/state-of-the-cloud-2024
+      kind: blog
+    - url: https://www.bvp.com/atlas/state-of-ai-2024
+      kind: blog
