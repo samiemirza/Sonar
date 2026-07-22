@@ -1,0 +1,22 @@
+# Hand-curated investors + their PUBLIC source URLs.
+# Public-only, no login-walled sources — see docs/DATA_SOURCES.md.
+# Target: ~60 investors (Phase 1). Structure example below.
+
+- name: Elad Gil
+  slug: elad-gil
+  type: angel
+  stage_focus: [seed, series-a]
+  site_url: https://eladgil.com
+  sources:
+    - url: https://blog.eladgil.com/feed
+      kind: rss
+
+- name: Sarah Tavel
+  firm: Benchmark
+  slug: sarah-tavel
+  type: fund
+  stage_focus: [series-a, series-b]
+  site_url: https://www.sarahtavel.com
+  sources:
+    - url: https://www.sarahtavel.com/feed
+      kind: rss
