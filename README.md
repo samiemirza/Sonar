@@ -4,7 +4,7 @@ Paste a one-line company description → get a ranked shortlist of investors who
 *currently* signaling public interest in your space. Every claim links back to the
 exact blog post, newsletter, or talk it was extracted from.
 
-**Live:** https://investor-tool-8x-plays.vercel.app
+**Live:** _deploy pending — Vercel project `sonar`_
 
 ## How it works
 
@@ -33,13 +33,13 @@ The same matching engine is exposed as an MCP server at `/api/mcp`
 Connect from Claude Code:
 
 ```bash
-claude mcp add --transport http sonar https://investor-tool-8x-plays.vercel.app/api/mcp
+claude mcp add --transport http sonar https://<production-domain>/api/mcp
 ```
 
 Or in any MCP client config:
 
 ```json
-{ "mcpServers": { "sonar": { "url": "https://investor-tool-8x-plays.vercel.app/api/mcp" } } }
+{ "mcpServers": { "sonar": { "url": "https://<production-domain>/api/mcp" } } }
 ```
 
 Smoke-test a running server: `node scripts/mcp-smoke.mjs http://localhost:3000`
