@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sonar — investor signal & matching engine
 
-## Getting Started
+Paste a one-line company description → get a ranked shortlist of investors who are
+*currently* signaling public interest in your space. Every claim links back to the
+exact blog post, newsletter, or talk it was extracted from.
 
-First, run the development server:
+**Live:** https://investor-tool-8x-plays.vercel.app
+
+## How it works
+
+An offline Python pipeline ingests public writing from ~50 curated investors
+(blogs, RSS, YouTube transcripts), chunks and embeds it into Neon Postgres +
+pgvector, then runs structured LLM extraction to produce per-investor **theses**
+and dated **signals** — each row carrying the id of the source it came from.
+The provenance rule is non-negotiable: no thesis field and no signal exists
+without a source.
+
+The online Next.js app embeds your description, retrieves semantically matching
+investor writing via pgvector, and streams an LLM-reranked shortlist: fit score,
+grounded reasoning, the single best "why now" signal (dated, sourced), and a
+tailored outreach angle. The rerank model cites signals **by id**; the server
+resolves claims, dates, and URLs from the database, so nothing user-facing is
+unverifiable model text.
+
+## MCP server
+
+The same matching engine is exposed as an MCP server at `/api/mcp`
+(streamable HTTP) with two tools:
+
+- `match_investors(company_description, stage?)` — ranked matches with sources
+- `get_investor_signals(investor_slug)` — full thesis + dated signal timeline
+
+Connect from Claude Code:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+claude mcp add --transport http sonar https://investor-tool-8x-plays.vercel.app/api/mcp
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or in any MCP client config:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```json
+{ "mcpServers": { "sonar": { "url": "https://investor-tool-8x-plays.vercel.app/api/mcp" } } }
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Smoke-test a running server: `node scripts/mcp-smoke.mjs http://localhost:3000`
 
-## Learn More
+## Running locally
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install && npm run dev          # web app on :3000 (needs DATABASE_URL, OPENAI_API_KEY in .env)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+cd pipeline
+uv run pipeline seed                # upsert investors from sources/seed_investors.yaml
+uv run pipeline ingest              # fetch + chunk + embed public sources
+uv run pipeline extract             # structured thesis/signal extraction (provenance-checked)
+uv run pipeline stats               # row counts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deliberately out of scope
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- No auth or accounts — one input, instant value.
+- Public, ToS-clean sources only (see `docs/DATA_SOURCES.md`) — no LinkedIn,
+  no login-walled content.
+- ~50 curated investors, depth over breadth — not an investor database.
+- No agentic browsing at request time — ingestion is batch; serving is fast
+  and deterministic.

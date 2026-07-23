@@ -134,18 +134,37 @@ function resolveCard(
   };
 }
 
+export type MatchOptions = {
+  /** Optional stage filter (pre-seed | seed | series-a | series-b | growth). */
+  stage?: string;
+};
+
 /**
  * Full match flow. Returns an async generator of resolved MatchCards, in the
- * order the rerank model emits them (best fit first).
+ * order the rerank model emits them (best fit first). Shared by the web API
+ * and the MCP server — one logic path.
  */
 export async function* matchInvestors(
   description: string,
+  options: MatchOptions = {},
 ): AsyncGenerator<MatchCard> {
   const db = getDb();
-  const queryEmbedding = await embedQuery(description);
+  const query = options.stage
+    ? `${description}\n\nStage: ${options.stage}`
+    : description;
+  const queryEmbedding = await embedQuery(query);
   const hits = await searchChunks(db, queryEmbedding, CHUNK_POOL);
   const { investorIds, excerptsByInvestor } = rankInvestors(hits);
-  const candidates = await getCandidates(db, investorIds);
+  let candidates = await getCandidates(db, investorIds);
+  if (options.stage) {
+    const stage = options.stage;
+    const atStage = candidates.filter((c) =>
+      (c.thesis.stages.length ? c.thesis.stages : c.investor.stageFocus).includes(stage),
+    );
+    // Only apply the filter if it leaves something to rank — a too-narrow
+    // stage should degrade to "best overall matches", not an empty answer.
+    if (atStage.length > 0) candidates = atStage;
+  }
   if (candidates.length === 0) return;
 
   // Preserve retrieval order for the dossier list.
@@ -173,7 +192,7 @@ export async function* matchInvestors(
     output: "array",
     schema: rerankedMatchSchema,
     system: RERANK_SYSTEM_PROMPT,
-    prompt: rerankUserPrompt(description, dossiers),
+    prompt: rerankUserPrompt(query, dossiers),
     // "minimal" keeps time-to-first-card low; ranking quality comes from the
     // dossier structure, not chain-of-thought.
     providerOptions: { openai: { reasoningEffort: "minimal" } },
