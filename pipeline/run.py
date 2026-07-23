@@ -132,6 +132,49 @@ def cmd_stats() -> int:
     return 0
 
 
+def cmd_extract(investor_slug: str | None) -> int:
+    from openai import OpenAI
+
+    from extract.thesis import MODEL, extract_investor
+
+    if not has_api_key():
+        print("OPENAI_API_KEY not set", file=sys.stderr)
+        return 1
+
+    conn = db.connect()
+    investors = db.investors_with_sources(conn, investor_slug)
+    if not investors:
+        print(f"no ingested investors match {investor_slug!r}", file=sys.stderr)
+        return 1
+
+    client = OpenAI()
+    print(f"extracting theses for {len(investors)} investors with {MODEL}")
+    done = skipped = 0
+    for inv in investors:
+        sources = db.sources_for_investor(conn, inv["id"])
+        try:
+            result = extract_investor(client, inv["id"], inv["name"], inv["firm"], sources)
+        except Exception as e:  # noqa: BLE001 — one bad investor must not kill the run
+            print(f"  ! {inv['slug']}: {e}", file=sys.stderr)
+            skipped += 1
+            continue
+        if result is None:
+            print(f"  ! {inv['slug']}: no extractable thesis", file=sys.stderr)
+            skipped += 1
+            continue
+        thesis, signals = result
+        db.save_extraction(conn, thesis, signals)
+        done += 1
+        print(
+            f"  {inv['slug']}: {len(thesis.sectors)} sectors, {len(thesis.themes)} themes, "
+            f"{len(signals)} signals"
+        )
+
+    print(f"\nextracted {done} theses ({skipped} skipped)")
+    print(f"totals: {db.counts(conn)}")
+    return 0 if done else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="pipeline")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -158,9 +201,10 @@ def main() -> int:
         return cmd_stats()
     if args.command == "embed":
         return cmd_embed()
+    if args.command == "extract":
+        return cmd_extract(args.investor)
 
-    # extract lands in Phase 2.
-    print(f"pipeline {args.command}: not implemented yet", file=sys.stderr)
+    print(f"pipeline {args.command}: unknown command", file=sys.stderr)
     return 1
 
 

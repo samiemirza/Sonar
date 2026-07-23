@@ -1,65 +1,192 @@
-import Image from "next/image";
+"use client";
+
+import { useRef, useState } from "react";
+import { Loader2, Radar } from "lucide-react";
+import { InvestorCard } from "@/components/investor-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import type { MatchCard } from "@/lib/ai/schemas";
+
+const EXAMPLES = [
+  "AI agent that automates SOC 2 compliance and security questionnaires for B2B startups",
+  "Open-source observability platform for LLM applications, pre-seed",
+  "Marketplace connecting independent pharmacies with wholesale drug distributors",
+  "Developer tool that records production traffic and replays it as integration tests",
+];
+
+type Status = "idle" | "searching" | "streaming" | "done" | "error";
 
 export default function Home() {
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [cards, setCards] = useState<MatchCard[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
+
+  async function runMatch(text: string) {
+    const trimmed = text.trim();
+    if (trimmed.length < 10) return;
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setCards([]);
+    setStatus("searching");
+
+    try {
+      const res = await fetch("/api/match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: trimmed }),
+        signal: controller.signal,
+      });
+      if (!res.ok || !res.body) throw new Error(`match failed (${res.status})`);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let received = false;
+
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const parsed = JSON.parse(line) as MatchCard | { error: string };
+          if ("error" in parsed) throw new Error(parsed.error);
+          received = true;
+          setStatus("streaming");
+          setCards((prev) => [...prev, parsed]);
+        }
+      }
+      setStatus(received ? "done" : "error");
+    } catch (err) {
+      if (controller.signal.aborted) return;
+      console.error(err);
+      setStatus("error");
+    }
+  }
+
+  const busy = status === "searching" || status === "streaming";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-12 sm:py-16">
+      <header className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <Radar aria-hidden className="size-6" />
+          <span className="text-xl font-semibold tracking-tight">Sonar</span>
+        </div>
+        <h1 className="max-w-xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          Find investors already signaling interest in your space
+        </h1>
+        <p className="max-w-xl text-muted-foreground">
+          Describe your company in one line. Sonar matches it against what 50+
+          investors have publicly written and said recently — every claim
+          linked to its source.
+        </p>
+      </header>
+
+      <section className="flex flex-col gap-3">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void runMatch(description);
+          }}
+          className="flex flex-col gap-2"
+        >
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. AI copilot that drafts and negotiates commercial contracts for in-house legal teams"
+            rows={3}
+            maxLength={2000}
+            className="resize-none text-base"
+          />
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-muted-foreground">
+              Matched against public blogs, newsletters, and talks only.
+            </p>
+            <Button type="submit" disabled={busy || description.trim().length < 10}>
+              {busy ? (
+                <>
+                  <Loader2 aria-hidden className="size-4 animate-spin" />
+                  Matching…
+                </>
+              ) : (
+                "Find investors"
+              )}
+            </Button>
+          </div>
+        </form>
+
+        <div className="flex flex-wrap gap-1.5">
+          {EXAMPLES.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => {
+                setDescription(example);
+                void runMatch(example);
+              }}
+              className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              {example}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4" aria-live="polite">
+        {status === "searching" && (
+          <>
+            <p className="text-sm text-muted-foreground">
+              Retrieving matching investor writing, then ranking…
+            </p>
+            {[0, 1].map((i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-20 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        )}
+
+        {cards.map((card) => (
+          <InvestorCard key={card.slug} match={card} />
+        ))}
+
+        {status === "streaming" && (
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 aria-hidden className="size-3.5 animate-spin" />
+            Ranking more investors…
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        )}
+
+        {status === "done" && cards.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            Ranked {cards.length} investors. Scores reflect thesis overlap,
+            stage fit, and recency of public signals — click through for full
+            provenance.
+          </p>
+        )}
+
+        {status === "error" && (
+          <p className="text-sm text-destructive">
+            Something went wrong while matching. Try again in a moment.
+          </p>
+        )}
+      </section>
     </div>
   );
 }
